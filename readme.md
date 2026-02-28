@@ -1,0 +1,16 @@
+# NixOS deployment template
+_**Unfinished**_
+The Purpose of this repo is to provide a template for deploying nixos to a server.
+NixOS anywhere is used for the deployment itself.
+This is the general idea:
+1. You generate an ssh-keypair and store the public key on the server for root user(any linux distro).
+2. You put the private key, IP adress, and desired hostname as GitHub repository secrets.
+3. You run the bootstrap pipeline, which installs NixOS on the target machine, and crucially does a couple of things:
+  - The template config in the repo is copied and given the desired hostname. It is placed under modules/hosts/[hostname].
+  - That config is installed, and disko is used for partitioning.
+  - The generated hardware config is uploaded to github and placed under modules/hosts/[hostname].
+  - The machine config is changed to import the hardware config.
+4. Using the module system, it is possible(and very useful) to have common baseline config imported in the template config.
+5. Extra config and rebuilding is possible for all machines or specific machines.
+
+This is designed to make it simpler to host staging servers and migrate servers for web projects and the like.
