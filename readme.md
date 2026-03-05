@@ -14,3 +14,13 @@ This is the general idea:
 5. Extra config and rebuilding is possible for all machines or specific machines.
 
 This is designed to make it simpler to host staging servers and migrate servers for web projects and the like.
+
+## WIP docs
+The config in `modules/hosts/bootstrap` can be deployed with this mostrocity:
+```bash
+nix run github:nix-community/nixos-anywhere \
+  -- --generate-hardware-config nixos-generate-config ./modules/hosts/bootstrap/_hardware-configuration.nix \
+  --flake .#bootstrap \
+  --target-host root@<IP> \
+  -i /path/to/ssh_private_key
+```
