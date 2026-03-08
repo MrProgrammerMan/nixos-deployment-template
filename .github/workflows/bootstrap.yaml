@@ -33,6 +33,8 @@ jobs:
           echo "${{ secrets.SSH_ROOT_KEY }}" > ~/.ssh/ed25519
           chmod 600 ~/.ssh/ed25519
           ssh-keyscan -H ${{ secrets.IP_ADDRESS }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_AGENIX_KEY }}" > ~/.ssh/agenix
+          chmod 600 ~/.ssh/agenix
       
       - name: Create host config from bootstrap template
         run: |
@@ -125,7 +127,8 @@ jobs:
           done
 
           cd secrets
-          nix run github:ryantm/agenix -- -e .env.age -i ~/.ssh/ed25519 < ../.env.rendered
+          rm .env.age
+          nix run github:ryantm/agenix -- -e .env.age -i ~/.ssh/agenix < ../.env.rendered
           shred -u ../.env.rendered
 
           if [[ ! -s .env.age ]]; then
