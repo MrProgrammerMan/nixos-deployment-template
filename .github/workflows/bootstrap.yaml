@@ -110,30 +110,23 @@ jobs:
           ALL_SECRETS: ${{ toJSON(secrets) }}
         run: |
           set -euo pipefail
+          cp .env.template .env.rendered
 
-          python3 - <<'EOF'
-          import os, json, re, pathlib
+          # Replace ${vars.KEY} from ALL_VARS
+          jq -r 'to_entries[] | "\(.key)\t\(.value)"' <<< "$ALL_VARS" | \
+          while IFS=$'\t' read -r k v; do
+            sed -i "s|\${vars\.${k}}|${v}|g" .env.rendered
+          done
 
-          template = pathlib.Path(".env.template").read_text()
-          data = {
-            **json.loads(os.environ["ALL_VARS"]),
-            **json.loads(os.environ["ALL_SECRETS"])
-          }
-
-          # Matches both $VAR and ${VAR} forms
-          result = re.sub(
-            r'\$\{(\w+)\}|\$(\w+)',
-            lambda m: data.get(m.group(1) or m.group(2), m.group(0)),
-            template
-          )
-
-          pathlib.Path(".env.rendered").write_text(result)
-          EOF
+          # Replace ${secrets.KEY} from ALL_SECRETS
+          jq -r 'to_entries[] | "\(.key)\t\(.value)"' <<< "$ALL_SECRETS" | \
+          while IFS=$'\t' read -r k v; do
+            sed -i "s|\${secrets\.${k}}|${v}|g" .env.rendered
+          done
 
           cd secrets
-
           nix run github:ryantm/agenix -- -e .env.age -i ~/.ssh/ed25519 < ../.env.rendered
-          shred -u .env.rendered
+          shred -u ../.env.rendered
 
           if [[ ! -s .env.age ]]; then
             echo "ERROR: .env.age was not created or is empty" && exit 1
