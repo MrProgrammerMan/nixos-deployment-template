@@ -1,7 +1,8 @@
 { self, ... }: {
   flake.nixosModules.common = { ... }: {
-    imports = [
-      self.nixosModules.bootstrap
+    imports = with self.nixosModules; [
+      bootstrap
+      secrets
     ];
   };
 }
