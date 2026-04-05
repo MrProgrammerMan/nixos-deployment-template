@@ -106,13 +106,13 @@ modules/hosts/my-server/
 
 ```bash
 # Using GitHub's template feature or:
-git clone https://github.com/MrProgrammerMan/nixos-deployment-template my-deployment
+git clone https://github.com/MPM-Labs/nixos-deployment-template my-deployment
 cd my-deployment
 ```
 
 Alternatively you can incorporate the tool in an existing repo like so:
 ```bash
-git remote add deployment https://github.com/MrProgrammerMan/nixos-deployment-template.git
+git remote add deployment https://github.com/MPM-Labs/nixos-deployment-template.git
 git fetch deployment
 git merge deployment/main --allow-unrelated-histories
 git remote remove deployment
